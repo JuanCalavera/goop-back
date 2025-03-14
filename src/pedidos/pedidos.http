@@ -1,0 +1,27 @@
+### list pedidos
+GET http://localhost:3000/pedidos
+
+### get pedido
+GET http://localhost:3000/pedidos/1
+
+### create pedidos
+POST http://localhost:3000/pedidos
+Content-Type: application/json
+
+{
+    "client": "Everton",
+    "total": 12,
+    "status": "Pendente",
+    "created_at": "2025-01-30T00:00:00.000Z"
+}
+
+### update pedidos
+PATCH http://localhost:3000/pedidos/1
+Content-Type: application/json
+
+{
+    "client": "Gerson"
+}
+
+### delete pedidos
+DELETE http://localhost:3000/pedidos/1

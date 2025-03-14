@@ -1,0 +1,26 @@
+### list items
+GET http://localhost:3000/items
+
+### get items
+GET http://localhost:3000/items/1
+
+### create items
+POST http://localhost:3000/items
+Content-Type: application/json
+
+{
+    "product": "Valvulas",
+    "quantity": 12,
+    "price": 103.20
+}
+
+### update items
+PATCH http://localhost:3000/items/1
+Content-Type: application/json
+
+{
+    "product": "Pneus"
+}
+
+### delete items
+DELETE http://localhost:3000/items/1
