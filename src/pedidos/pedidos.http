@@ -10,9 +10,9 @@ Content-Type: application/json
 
 {
     "client": "Everton",
+    "items": [1],
     "total": 12,
-    "status": "Pendente",
-    "created_at": "2025-01-30T00:00:00.000Z"
+    "status": "Pendente"
 }
 
 ### update pedidos

@@ -38,6 +38,11 @@ export class ItemsService {
 
   async remove(id: number) {
     const removable = await this.prisma.item.findUnique({where: {id}});
+
+    if(!removable){
+      throw new BadRequestException('Unknow this item');
+    }
+    
     await this.prisma.item.delete({where: {id}});
     return `This action removes a ${removable?.product} item`;
   }

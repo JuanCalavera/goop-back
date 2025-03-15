@@ -9,23 +9,67 @@ export class PedidosService {
   constructor(private prisma: PrismaService) { }
 
   async create(createPedidoDto: CreatePedidoDto) {
-    await this.prisma.pedido.create({ data: createPedidoDto });
-    return 'This action adds a new pedido';
+
+    const allItems = createPedidoDto.items;
+    const { items, ...pedidoWithoutItems } = createPedidoDto;
+    const newPedido = await this.prisma.pedido.create({ data: pedidoWithoutItems });
+
+    for (const value of allItems) {
+      const findPivot = await this.prisma.itemPedido.findUnique(
+        {
+          where: {
+            pedidoId_itemId: {
+              pedidoId: newPedido.id,
+              itemId: value
+            }
+          }
+        });
+
+      if (!findPivot) {
+        await this.prisma.itemPedido.create({ data: { "itemId": value, "pedidoId": newPedido.id } });
+      }
+    }
+
+    return newPedido;
   }
 
   async findAll() {
-    const allPedidos = await this.prisma.pedido.findMany();
-    return allPedidos;
+    const allPedidos = await this.prisma.pedido.findMany({
+      include: {
+        itens: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+
+    return allPedidos.map((pedido) => ({
+      ...pedido,
+      itens: pedido.itens.map((itemPedido) => itemPedido.item),
+    }));
   }
 
   async findOne(id: number) {
-    const pedido = await this.prisma.pedido.findUnique({ where: { id } });
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id },
+      include: {
+        itens: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
 
-    if(!pedido){
+    if (!pedido) {
       throw new BadRequestException('Unknow this pedido');
     }
 
-    return pedido;
+    return {
+      ...pedido,
+      itens: pedido.itens.map((itemPedido) => itemPedido.item),
+    };
   }
 
   async update(id: number, updatePedidoDto: UpdatePedidoDto) {
@@ -37,6 +81,11 @@ export class PedidosService {
 
   async remove(id: number) {
     const removable = await this.prisma.pedido.findUnique({ where: { id } })
+
+    if (!removable) {
+      throw new BadRequestException('Unknow this pedido');
+    }
+
     await this.prisma.pedido.delete({ where: { id } });
     return `This action removes a pedido from client ${removable?.client}`;
   }

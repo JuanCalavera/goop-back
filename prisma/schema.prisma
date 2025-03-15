@@ -19,7 +19,7 @@ model Pedido {
   itens     ItemPedido[] @relation()
   total Float @db.Float
   status String @db.VarChar(255)
-  created_at DateTime @db.DateTime()
+  created_at DateTime? @db.DateTime()
 
   @@map("pedidos")
 }
