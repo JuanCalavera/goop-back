@@ -11,10 +11,11 @@ export class PedidosService {
   async create(createPedidoDto: CreatePedidoDto) {
 
     const allItems = createPedidoDto.items;
-    const { items, ...pedidoWithoutItems } = createPedidoDto;
-    const newPedido = await this.prisma.pedido.create({ data: pedidoWithoutItems });
+    const allItemsInNumber = allItems.map(Number);
+    const { items, ...pedidoWithoutItens } = createPedidoDto;
+    const newPedido = await this.prisma.pedido.create({ data: pedidoWithoutItens });
 
-    for (const value of allItems) {
+    for (const value of allItemsInNumber) {
       const findPivot = await this.prisma.itemPedido.findUnique(
         {
           where: {
@@ -76,7 +77,7 @@ export class PedidosService {
     const pedido = await this.findOne(id);
 
     await this.prisma.pedido.update({ where: { id }, data: updatePedidoDto });
-    return `Update Successfull`;
+    return { message: "Update Successfull" };
   }
 
   async remove(id: number) {
